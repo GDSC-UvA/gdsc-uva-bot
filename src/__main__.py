@@ -1,6 +1,5 @@
 import discord
 import logging
-from discord.ext import commands
 import os
 import pprint
 
@@ -14,35 +13,32 @@ if TOKEN is None:
 
 logger = logging.getLogger(__name__)
 
-# TODO Just use discord.Bot
-class GDSCUvAClient(discord.Client):
-    
-    async def on_ready(self):
-        print(f"Logged on as {self.user}!")
-        
-    async def on_message(self, message: discord.Message):
-        if message.author != self.user:
-            try:
-                channel = await message.author.create_dm()
-                await channel.send(render.verification_message(message.author.name))
-            except discord.errors.HTTPException as err:
-                if err.code == 50007:
-                    # Discord Bot is not able to send a DM to user.
-                    # Most likely because the user 
-                    logger.warning(f"Could not send user '{message.author}' a verification message.")
-                else:
-                    raise err
-
 intents = discord.Intents.default()
 intents.message_content = True
 
-bot = commands.Bot(command_prefix="$>", intents=intents)
+bot = discord.Bot(intents=intents)
 
-@bot.command(name="test", help="Please just enter something as a string.")
-async def test(ctx, args: str):
-    print(args)
+@bot.event
+async def on_ready():
+    print(f"Logged on as {bot.user}!")
+
+@bot.event
+async def on_message(message: discord.Message):
+    if message.author != bot.user:
+        try:
+            channel = await message.author.create_dm()
+            await channel.send(render.verification_message(message.author.name))
+        except discord.errors.HTTPException as err:
+            if err.code == 50007:
+                # Discord Bot is not able to send a DM to user.
+                # Most likely because the user 
+                logger.warning(f"Could not send user '{message.author}' a verification message.")
+            else:
+                raise err
+
+@bot.slash_command()
+async def test(ctx, arg: str):
+    print(arg)
+    await ctx.send("Recieved command!")
 
 bot.run(TOKEN)
-
-# client = GDSCUvAClient(intents=intents)
-# client.run(TOKEN)
