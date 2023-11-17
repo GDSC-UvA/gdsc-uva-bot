@@ -2,13 +2,15 @@ import discord
 import logging
 from discord.ext import commands
 import os
+import pprint
 
 from utils import render_templates as render
 
-TOKEN = os.environ.get("DISCORD_BOT_TOKEN")
+
+TOKEN = os.environ.get("GDSC_DISCORD_TOKEN")
 
 if TOKEN is None:
-    raise ValueError("Discord Bot token is not defined in environment variable 'DISCORD_BOT_TOKEN'!")
+    raise ValueError("Discord Bot token is not defined in environment variable 'GDSC_DISCORD_TOKEN'!")
 
 logger = logging.getLogger(__name__)
 
