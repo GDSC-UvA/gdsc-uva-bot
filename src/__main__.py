@@ -1,7 +1,6 @@
 import discord
 import logging
 import os
-import pprint
 
 from utils import render_templates as render
 
